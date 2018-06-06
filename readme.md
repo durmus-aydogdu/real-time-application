@@ -6,10 +6,12 @@ Real time User Create/Update/Destroy example with Laravel / Redis / Socket.IO / 
 
 ## Installation
 
+- Install redis server
 - Run `composer install`
 - Run `npm install`
 - Run `npm install -g laravel-echo-server`
 - Run `laravel-echo-server init`
+- Run `npm run dev`
 - Update `.env` file
 - Run `php artisan key:generate` 
 - Run `php artisan migrate` 
@@ -18,4 +20,4 @@ Real time User Create/Update/Destroy example with Laravel / Redis / Socket.IO / 
 ## Usage
 
 - Run `php artisan queue:work`
-- Run `npm run dev`
+- Run `laravel-echo-server start`
