@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Role;
-use App\RoleUser;
+use App\Events\UserDestroyEvent;
 use App\Events\UserStoreEvent;
 use App\Events\UserUpdateEvent;
-use App\Events\UserDestroyEvent;
 use App\Http\Requests\UserStoreRequest;
 use App\Http\Requests\UserUpdateRequest;
+use App\Role;
+use App\RoleUser;
 
 class UserController extends \DurmusAydogdu\Resource\ResourceController
 {
@@ -16,7 +16,7 @@ class UserController extends \DurmusAydogdu\Resource\ResourceController
 
     protected $indexView = 'users';
 
-    protected $perPage = 50;
+    protected $perPage = 25;
 
     protected $items = "users";
 

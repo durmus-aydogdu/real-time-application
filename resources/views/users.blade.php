@@ -30,10 +30,8 @@
                                     <td>{{ $user->name }}</td>
                                     <td>{{ $user->email }}</td>
                                     <td>
-                                        <div class="btn-group">
-                                            <button id="edit" value="{{ $user->id }}" class="btn btn-primary"> Edit </button>
-                                             <button id="delete" value="{{ $user->id }}" class="btn btn-danger"> Delete </button>
-                                        </div>
+                                        <button id="edit" value="{{ $user->id }}" class="btn btn-primary"> Edit </button>
+                                        <button id="delete" value="{{ $user->id }}" class="btn btn-danger"> Delete </button>
                                     </td>
                                 </tr>
                             @endforeach
@@ -171,17 +169,17 @@
             $('#userCreateModal').modal('show');
         });
 
-        $(document).on('click','#edit',function(e){
+        $(document).on('click','#edit',function(){
             var user_id = $(this).val();
 
-            $.get('users/' + user_id, function (items) {
-                $('#name-update').val(items.data.name);
-                $('#email-update').val(items.data.email);
-                $('#user-id').val(items.data.id);
+            $.get('users/' + user_id, function (data) {
+                $('#name-update').val(data.user.name);
+                $('#email-update').val(data.user.email);
+                $('#user-id').val(data.user.id);
                 var roles = '';
-                $.each(items.meta.roles, function (key, value) {
+                $.each(data.meta.roles, function (key, value) {
                     var checked = '';
-                    items.data.roles.map(function (role) {
+                    data.user.roles.map(function (role) {
                         if (role.id === value.id) {
                             checked = 'checked';
                         }
@@ -204,7 +202,7 @@
                 '_token': $('meta[name=csrf-token]').attr('content'),
                 _method : 'DELETE'
             })
-                .done(function(data) {
+                .done(function() {
                     $("#user-" + user_id).fadeOut(500);
                 })
 
@@ -221,11 +219,9 @@
         $("#user-create").click(function () {
             var formData = $('#user-create-form').serialize();
 
-            $.post( 'users', formData)
+            $.post('users', formData)
                 .done(function(data) {
                     var newUser = createUserObject(data);
-                    $("#user-" + data.id).replaceWith( newUser );
-
                     $('#users').prepend(newUser);
                     $('#user-create-form').trigger("reset");
                     $('#userCreateModal').modal('hide');
@@ -245,15 +241,27 @@
             var user_id  = $('#user-id').val();
             var formData = $('#user-edit-form').serialize();
 
-            $.post( 'users/' +user_id, formData);
+            $.post( 'users/' +user_id, formData)
+                .done(function(data) {
+                    var newUser = createUserObject(data);
+                    $("#user-" + data.id).replaceWith( newUser );
+                    $('#userEditModal').modal('hide');
+                })
 
-            $('#userEditModal').modal('hide');
+                .fail(function(data) {
+                    if (data.responseJSON.message) {
+                        window.alert(data.responseJSON.message);
+                    }
+                    else {
+                        window.alert(data.responseJSON);
+                    }
+                });
         });
 
         function createUserObject(data) {
             var user = '<tr id="user-' + data.id + '"><td>'+data.name+'</td><td>'+data.email+'</td>';
             user += '<td><button id="edit" value="'+data.id+'" class="btn btn-primary"> Edit </button>';
-            user += '<button id="delete" value="'+data.id+'" class="btn btn-danger"> Delete </button></td>';
+            user += ' <button id="delete" value="'+data.id+'" class="btn btn-danger"> Delete </button></td>';
 
             return user;
         }
